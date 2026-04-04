@@ -5,20 +5,10 @@ import * as THREE from "three";
 // ─────────────────────────────────────────────────────────────────────────────
 // ⚠️  SWAP THESE BEFORE DEPLOYMENT
 // ─────────────────────────────────────────────────────────────────────────────
-const PHOTO_URL   = "/assets/photo.jpg";      // put your photo in /public/assets/
-const RESUME_URL  = "/assets/resume.pdf";     // put your resume in /public/assets/
+const PHOTO_URL   = "/assets/myphoto.jpg";
+const RESUME_URL  = "/assets/Sadhasivam_resume.pdf";
 
-// ─── CERTIFICATIONS DATA ─────────────────────────────────────────────────────
-const certifications = [
-  { id:1, name:"Data Analyst",               issuer:"NoviTech", year:"2024", icon:"📊", color:"#d97706", link:"https://drive.google.com/your-link-1" },
-  { id:2, name:"Artificial Intelligence",    issuer:"NoviTech", year:"2024", icon:"🤖", color:"#b45309", link:"https://drive.google.com/your-link-2" },
-  { id:3, name:"Machine Learning",           issuer:"NoviTech", year:"2024", icon:"🧠", color:"#92400e", link:"https://drive.google.com/your-link-3" },
-  { id:4, name:"Full Stack Developer",       issuer:"NoviTech", year:"2024", icon:"💻", color:"#78350f", link:"https://drive.google.com/your-link-4" },
-  { id:5, name:"Data Structures",            issuer:"Coursera", year:"2023", icon:"🗂️", color:"#d97706", link:"https://drive.google.com/your-link-5" },
-  { id:6, name:"Foundation of Java",         issuer:"Infosys",  year:"2023", icon:"☕", color:"#b45309", link:"https://drive.google.com/your-link-6" },
-  { id:7, name:"Basics of Python",           issuer:"GUVI",     year:"2023", icon:"🐍", color:"#92400e", link:"https://drive.google.com/your-link-7" },
-  { id:8, name:"HCI Design & Implementation",issuer:"NPTEL",    year:"2023", icon:"🎨", color:"#78350f", link:"https://drive.google.com/your-link-8" },
-];
+
 
 // ─── PROJECTS DATA ───────────────────────────────────────────────────────────
 const projects = [
@@ -103,12 +93,7 @@ const experience = [{
   ],
 }];
 
-const achievements = [
-  { title:"UiPath Hackathon", sub:"3rd Place", desc:"Secured 3rd place at Sona College of Technology's UiPath RPA Hackathon, competing among teams building automation workflows.", year:"2024" },
-  { title:"NoviTech Certifications", sub:"Data Analyst · AI · ML · Full Stack", desc:"Completed four professional certification tracks: Data Analyst, Artificial Intelligence, Machine Learning, and Full Stack Developer.", year:"2024" },
-  { title:"NPTEL", sub:"Design & Implementation of HCI", desc:"Completed NPTEL certified course on Human Computer Interface design and implementation.", year:"2023" },
-  { title:"Intercollegiate Football", sub:"1st Place", desc:"Secured 1st place in Football at Sona College of Technology's intercollegiate sports event.", year:"2022" },
-];
+
 
 const CODE_SNIPPETS = [
   "model.fit(X_train,y_train)","rag.query(user_input)","agent.run(workflow)",
@@ -247,28 +232,27 @@ function HeroPhoto() {
 
       {/* Outer pulse rings */}
       <motion.div animate={{ scale:[1,1.06,1], opacity:[0.3,0.08,0.3] }} transition={{ duration:3, repeat:Infinity, ease:"easeInOut" }}
-        style={{ position:"absolute", inset:-14, borderRadius:"50%", border:"1px solid rgba(217,119,6,0.35)", pointerEvents:"none" }} />
+        style={{ position:"absolute", inset:-16, borderRadius:"50%", border:"1px solid rgba(217,119,6,0.35)", pointerEvents:"none" }} />
       <motion.div animate={{ scale:[1,1.10,1], opacity:[0.15,0.04,0.15] }} transition={{ duration:3, repeat:Infinity, ease:"easeInOut", delay:0.8 }}
-        style={{ position:"absolute", inset:-26, borderRadius:"50%", border:"1px solid rgba(217,119,6,0.2)", pointerEvents:"none" }} />
+        style={{ position:"absolute", inset:-30, borderRadius:"50%", border:"1px solid rgba(217,119,6,0.2)", pointerEvents:"none" }} />
 
       {/* Photo circle */}
       <div style={{
-        width:160, height:160, borderRadius:"50%", overflow:"hidden",
+        width:200, height:200, borderRadius:"50%", overflow:"hidden",
         border:"2px solid rgba(217,119,6,0.5)",
-        boxShadow:"0 0 40px rgba(217,119,6,0.12), 0 8px 32px rgba(0,0,0,0.6)",
+        boxShadow:"0 0 50px rgba(217,119,6,0.15), 0 8px 32px rgba(0,0,0,0.6)",
         background:"#1c1008", position:"relative",
       }}>
         {/* Placeholder shown until image loads */}
         {!loaded && (
           <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:6 }}>
-            <div style={{ width:52, height:52, borderRadius:"50%", background:"rgba(217,119,6,0.18)" }} />
-            <div style={{ width:80, height:36, borderRadius:"50% 50% 0 0", background:"rgba(217,119,6,0.12)" }} />
+            <div style={{ width:64, height:64, borderRadius:"50%", background:"rgba(217,119,6,0.18)" }} />
+            <div style={{ width:96, height:44, borderRadius:"50% 50% 0 0", background:"rgba(217,119,6,0.12)" }} />
           </div>
         )}
-        {/* ⚠ Replace PHOTO_URL at top of file with your image path */}
         <img src={PHOTO_URL} alt="Sadhasivam Perichi"
           onLoad={()=>setLoaded(true)}
-          style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top", opacity:loaded?1:0, transition:"opacity 0.4s" }} />
+          style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center 20%", opacity:loaded?1:0, transition:"opacity 0.4s", imageRendering:"auto" }} />
       </div>
 
       {/* Stat chips below photo */}
@@ -305,83 +289,7 @@ function HeroPhoto() {
 // ══════════════════════════════════════════════════════
 // ✦ 3D CERT STACK
 // ══════════════════════════════════════════════════════
-function CertStack() {
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const intervalRef = useRef(null);
-  const total = certifications.length;
 
-  const startAuto = useCallback(()=>{
-    clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(()=>{ setActiveIdx(i=>(i+1)%total); }, 3000);
-  },[total]);
-
-  useEffect(()=>{ if(!paused) startAuto(); else clearInterval(intervalRef.current); return()=>clearInterval(intervalRef.current); },[paused]);
-
-  const goTo = idx => { setActiveIdx(idx); clearInterval(intervalRef.current); intervalRef.current=setInterval(()=>setActiveIdx(i=>(i+1)%total),3000); };
-
-  const getCardStyle = offset => {
-    const abs=Math.abs(offset), sign=Math.sign(offset);
-    return {
-      position:"absolute",
-      width:abs===0?280:abs===1?240:abs===2?210:185,
-      height:abs===0?185:abs===1?158:abs===2?138:122,
-      zIndex:20-abs,
-      transform:[`translateX(${sign*abs*85}px)`,`translateY(${abs*18}px)`,`rotateY(${sign*abs*-22}deg)`,`rotateX(${abs*4}deg)`,`scale(${1-abs*0.07})`].join(" "),
-      opacity:abs>3?0:1-abs*0.18,
-      transition:"all 0.5s cubic-bezier(0.22,1,0.36,1)",
-      borderRadius:"6px", overflow:"hidden",
-      boxShadow:abs===0?"0 24px 60px rgba(0,0,0,0.7),0 0 30px rgba(217,119,6,0.15)":`0 ${8-abs*2}px ${20-abs*4}px rgba(0,0,0,0.5)`,
-      cursor:abs===0?"pointer":"default",
-      pointerEvents:abs===0?"auto":"none",
-    };
-  };
-
-  const cert = certifications[activeIdx];
-  return (
-    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:"2rem" }}>
-      <div style={{ position:"relative", width:"100%", height:260, display:"flex", justifyContent:"center", alignItems:"center", perspective:"1000px" }}
-        onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
-        {certifications.map((c,i)=>{
-          let offset=i-activeIdx;
-          if(offset>total/2) offset-=total;
-          if(offset<-total/2) offset+=total;
-          if(Math.abs(offset)>3) return null;
-          return (
-            <div key={c.id} style={getCardStyle(offset)} onClick={()=>offset===0&&window.open(c.link,"_blank","noopener noreferrer")}>
-              <div style={{ width:"100%", height:"100%", background:"linear-gradient(135deg,rgba(28,16,4,0.97),rgba(9,9,11,0.99))", border:`1px solid ${c.color}55`, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:"0.6rem", padding:"1.25rem", position:"relative" }}>
-                {offset===0&&(<motion.div animate={{ x:["-100%","200%"] }} transition={{ duration:2.5, repeat:Infinity, repeatDelay:2, ease:"easeInOut" }} style={{ position:"absolute", top:0, left:0, width:"40%", height:"100%", background:"linear-gradient(90deg,transparent,rgba(217,119,6,0.06),transparent)", pointerEvents:"none", zIndex:1 }} />)}
-                {[[{top:0,left:0},{borderTop:`1px solid ${c.color}`,borderLeft:`1px solid ${c.color}`}],[{top:0,right:0},{borderTop:`1px solid ${c.color}`,borderRight:`1px solid ${c.color}`}],[{bottom:0,left:0},{borderBottom:`1px solid ${c.color}`,borderLeft:`1px solid ${c.color}`}],[{bottom:0,right:0},{borderBottom:`1px solid ${c.color}`,borderRight:`1px solid ${c.color}`}]].map(([pos,brd],k)=>(<div key={k} style={{ position:"absolute", width:14, height:14, ...pos, ...brd }} />))}
-                <div style={{ fontSize:offset===0?"2rem":"1.4rem", lineHeight:1, zIndex:2 }}>{c.icon}</div>
-                <div style={{ textAlign:"center", zIndex:2 }}>
-                  <p style={{ fontFamily:"monospace", fontSize:"0.55rem", letterSpacing:"0.2em", textTransform:"uppercase", color:c.color, marginBottom:"0.3rem" }}>Certificate of Completion</p>
-                  <p style={{ fontFamily:"Georgia,serif", fontSize:offset===0?"0.95rem":"0.75rem", fontWeight:300, color:"#f4f4f5", marginBottom:"0.2rem", lineHeight:1.3 }}>{c.name}</p>
-                  <p style={{ fontFamily:"monospace", fontSize:"0.6rem", color:"#71717a" }}>{c.issuer} · {c.year}</p>
-                </div>
-                {offset===0&&(<motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.3 }} style={{ zIndex:2, display:"flex", alignItems:"center", gap:"0.35rem", marginTop:"0.25rem" }}><span style={{ fontFamily:"monospace", fontSize:"0.55rem", letterSpacing:"0.15em", textTransform:"uppercase", color:c.color, opacity:0.7 }}>Click to view</span><span style={{ color:c.color, fontSize:"0.65rem", opacity:0.7 }}>↗</span></motion.div>)}
-                <div style={{ position:"absolute", bottom:"0.5rem", right:"0.6rem", fontFamily:"monospace", fontSize:"0.48rem", color:c.color, opacity:0.4, letterSpacing:"0.12em" }}>VERIFIED ✓</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <div style={{ display:"flex", alignItems:"center", gap:"1.5rem" }}>
-        <button onClick={()=>goTo((activeIdx-1+total)%total)} style={{ background:"none", border:"1px solid #3f3f46", color:"#a1a1aa", width:36, height:36, borderRadius:"2px", cursor:"pointer", fontFamily:"monospace", fontSize:"1rem", transition:"border-color 0.2s,color 0.2s" }} onMouseEnter={e=>{e.target.style.borderColor="#d97706";e.target.style.color="#fbbf24";}} onMouseLeave={e=>{e.target.style.borderColor="#3f3f46";e.target.style.color="#a1a1aa";}}>←</button>
-        <div style={{ display:"flex", gap:"0.4rem", alignItems:"center" }}>
-          {certifications.map((_,i)=>(<button key={i} onClick={()=>goTo(i)} style={{ width:i===activeIdx?20:6, height:6, borderRadius:3, background:i===activeIdx?"#d97706":"#3f3f46", border:"none", cursor:"pointer", padding:0, transition:"all 0.3s ease" }} />))}
-        </div>
-        <button onClick={()=>goTo((activeIdx+1)%total)} style={{ background:"none", border:"1px solid #3f3f46", color:"#a1a1aa", width:36, height:36, borderRadius:"2px", cursor:"pointer", fontFamily:"monospace", fontSize:"1rem", transition:"border-color 0.2s,color 0.2s" }} onMouseEnter={e=>{e.target.style.borderColor="#d97706";e.target.style.color="#fbbf24";}} onMouseLeave={e=>{e.target.style.borderColor="#3f3f46";e.target.style.color="#a1a1aa";}}>→</button>
-      </div>
-      <AnimatePresence mode="wait">
-        <motion.div key={activeIdx} initial={{ opacity:0, y:6 }} animate={{ opacity:1, y:0 }} exit={{ opacity:0, y:-6 }} transition={{ duration:0.3 }} style={{ textAlign:"center" }}>
-          <p style={{ fontFamily:"Georgia,serif", fontSize:"1rem", fontWeight:300, color:"#e4e4e7", marginBottom:"0.2rem" }}>{cert.name}</p>
-          <p style={{ fontFamily:"monospace", fontSize:"0.68rem", color:"#71717a" }}>{cert.issuer} · {cert.year}</p>
-          <p style={{ fontFamily:"monospace", fontSize:"0.6rem", color:"#52525b", marginTop:"0.3rem", letterSpacing:"0.1em" }}>{activeIdx+1} of {total} · {paused?"⏸ paused":"▶ auto-rotating"}</p>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-}
 
 // ══════════════════════════════════════════════════════
 // ✦ HEX BACKGROUND
@@ -483,7 +391,7 @@ function HexSection({ id, label, children }) {
 function Nav() {
   const [scrolled,setScrolled]=useState(false),[menuOpen,setMenuOpen]=useState(false);
   useEffect(()=>{const h=()=>setScrolled(window.scrollY>50);window.addEventListener("scroll",h,{passive:true});return()=>window.removeEventListener("scroll",h);},[]);
-  const links=[["Work","#case-studies"],["Projects","#projects"],["Skills","#skills"],["Experience","#experience"],["Certs","#certifications"],["GitHub","#proof"],["Contact","#contact"]];
+  const links=[["Work","#case-studies"],["Projects","#projects"],["Skills","#skills"],["Experience","#experience"],["GitHub","#proof"],["Contact","#contact"]];
   return(<motion.nav initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} style={{position:"fixed",top:0,left:0,right:0,zIndex:50,background:scrolled?"rgba(9,9,11,0.92)":"transparent",backdropFilter:scrolled?"blur(16px)":"none",borderBottom:scrolled?"1px solid rgba(39,39,42,0.7)":"1px solid transparent",transition:"background 0.3s"}}>
     <div style={{maxWidth:"64rem",margin:"0 auto",padding:"0 1.5rem",height:"3.5rem",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
       <span style={{fontFamily:"monospace",fontSize:"0.875rem",letterSpacing:"0.15em",color:"#d97706"}}>SP</span>
@@ -534,7 +442,8 @@ function Hero() {
           </div>
           <AnimatePresence>{isDone&&(<motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:0.5}} style={{height:"2.5rem",position:"relative",marginBottom:"1.75rem",maxWidth:"360px"}}><AnimatePresence mode="wait"><motion.span key={roleIdx} initial={{opacity:0,y:14}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-14}} transition={{duration:0.35,ease:"easeOut"}} style={{fontFamily:"monospace",fontSize:"1.1rem",color:"#fbbf24",position:"absolute",whiteSpace:"nowrap"}}>{roles[roleIdx]}</motion.span></AnimatePresence></motion.div>)}</AnimatePresence>
           <AnimatePresence>{isDone&&(<motion.div initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:0.15,duration:0.6}}>
-            <p style={{maxWidth:"480px",color:"#a1a1aa",fontSize:"0.88rem",lineHeight:1.75,marginBottom:"2rem"}}>Final-year AI &amp; ML student at Sona College of Technology. Currently building agentic voice AI systems at Spacemarvel.ai — RAG pipelines, real-time speech, and multi-agent call automation.</p>
+            <p style={{maxWidth:"480px",color:"#a1a1aa",fontSize:"0.88rem",lineHeight:1.75,marginBottom:"2rem"}}>Artificial Intelligence & Machine Learning graduate from Sona College of Technology, Salem.
+AI Engineer at Spacemarvel.ai, building production-grade agentic voice systems, RAG pipelines, and real-time speech applications.</p>
             {/* Buttons — Get in touch · Resume · GitHub */}
             <div style={{display:"flex",flexWrap:"wrap",gap:"0.85rem",marginBottom:"2.5rem"}}>
               <a href="#contact" style={{padding:"0.6rem 1.25rem",background:"#d97706",color:"#09090b",fontFamily:"monospace",fontSize:"0.78rem",letterSpacing:"0.08em",textDecoration:"none",transition:"background 0.2s"}} onMouseEnter={e=>e.target.style.background="#fbbf24"} onMouseLeave={e=>e.target.style.background="#d97706"}>Get in touch</a>
@@ -672,32 +581,9 @@ function Experience() {
   );
 }
 
-// ─── ACHIEVEMENTS ────────────────────────────────────────────────────────────
-function Achievements() {
-  const [ref,isInView]=useScrollReveal();
-  return(<HexSection id="achievements" label="Achievements"><div ref={ref} className="grid sm:grid-cols-2 gap-5">{achievements.map((a,i)=>(<motion.div key={a.title} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={i}><TiltCard style={{border:"1px solid rgba(39,39,42,0.8)",padding:"1.5rem",borderRadius:"3px",background:"rgba(9,9,11,0.72)",backdropFilter:"blur(8px)",height:"100%",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s",cursor:"default"}}
-              onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 32px rgba(217,119,6,0.18),inset 0 0 20px rgba(217,119,6,0.04)"; }}
-              onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.72)"; el.style.boxShadow="none"; }}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:"1rem",marginBottom:"0.75rem"}}><div><p style={{fontFamily:"Georgia,serif",fontWeight:300,color:"#e4e4e7",lineHeight:1.3}}>{a.title}</p><p style={{fontSize:"0.68rem",color:"#b45309",marginTop:"0.2rem"}}>{a.sub}</p></div><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#52525b",flexShrink:0}}>{a.year}</span></div><p style={{fontSize:"0.82rem",color:"#71717a",lineHeight:1.65}}>{a.desc}</p></TiltCard></motion.div>))}</div></HexSection>);
-}
 
-// ─── CERTIFICATIONS ───────────────────────────────────────────────────────────
-function Certifications() {
-  const [ref,isInView]=useScrollReveal();
-  return(
-    <HexSection id="certifications" label="Certifications">
-      <motion.div ref={ref} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp}>
-        <div style={{border:"1px solid rgba(39,39,42,0.8)",borderRadius:"4px",background:"rgba(9,9,11,0.75)",backdropFilter:"blur(12px)",padding:"2.5rem",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
-          onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 40px rgba(217,119,6,0.18),inset 0 0 24px rgba(217,119,6,0.04)"; }}
-          onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.75)"; el.style.boxShadow="none"; }}>
-          <div style={{textAlign:"center",marginBottom:"2rem"}}>
-            <p style={{fontFamily:"monospace",fontSize:"0.68rem",color:"#52525b",letterSpacing:"0.15em"}}>Auto-rotating every 3s · Hover to pause · Click front card to open certificate</p>
-          </div>
-          <CertStack/>
-        </div>
-      </motion.div>
-    </HexSection>
-  );
-}
+
+
 
 // ─── ABOUT ───────────────────────────────────────────────────────────────────
 function About() {
@@ -711,8 +597,9 @@ function About() {
         onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.75)"; el.style.boxShadow="none"; }}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"3rem",alignItems:"center"}}>
           <motion.div ref={ref} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp}>
-            <p style={{color:"#d4d4d8",fontSize:"0.95rem",lineHeight:1.8,marginBottom:"1.25rem"}}>Final-year B.E. student in Artificial Intelligence & Machine Learning at Sona College of Technology, Salem. Currently interning at Spacemarvel.ai as an AI Engineer — building production-grade agentic voice systems and RAG pipelines.</p>
-            <p style={{color:"#a1a1aa",fontSize:"0.85rem",lineHeight:1.75,marginBottom:"1.25rem"}}>Work spans computer vision, LLM-backed pipelines, full-stack development, and data analytics. Comfortable across the stack from model training to API deployment to front-end interfaces.</p>
+            <p style={{color:"#d4d4d8",fontSize:"0.95rem",lineHeight:1.8,marginBottom:"1.25rem"}}>Artificial Intelligence & Machine Learning graduate from Sona College of Technology, Salem.
+Currently working as an AI Engineer at Spacemarvel.ai, building production-grade agentic voice systems and RAG pipelines.</p>
+            <p style={{color:"#a1a1aa",fontSize:"0.85rem",lineHeight:1.75,marginBottom:"1.25rem"}}>Experience spans computer vision, LLM-backed systems, full-stack development, and data analytics — from model training to API deployment to front-end interfaces.</p>
             <p style={{color:"#71717a",fontSize:"0.82rem",lineHeight:1.7}}>Outside engineering: competitive football — 1st place intercollegiate. Based in Tamil Nadu, India.</p>
           </motion.div>
           <motion.div ref={chipRef} initial={{opacity:0,scale:0.85}} animate={chipInView?{opacity:1,scale:1}:{opacity:0,scale:0.85}} transition={{duration:0.85,ease:[0.22,1,0.36,1]}}>
@@ -735,7 +622,7 @@ function About() {
 // ─── PROOF ───────────────────────────────────────────────────────────────────
 function Proof() {
   const [ref,isInView]=useScrollReveal();
-  const stats=[{value:"12+",label:"GitHub Repos",sub:"public projects"},{value:"300+",label:"Commits (12mo)",sub:"active contributor"},{value:"8",label:"Certifications",sub:"across platforms"},{value:"6+",label:"Projects Built",sub:"AI · CV · Web · Data"}];
+  const stats=[{value:"12+",label:"GitHub Repos",sub:"public projects"},{value:"300+",label:"Commits (12mo)",sub:"active contributor"},{value:"6+",label:"Projects Built",sub:"AI · CV · Web · Data"}];
   const StatCard=({value,label,sub,index})=>{const suffix=(value+"").replace(/[0-9]/g,""),count=useCounter(value,isInView);return(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={index} style={{background:"rgba(9,9,11,0.78)",padding:"1.5rem",textAlign:"center",backdropFilter:"blur(8px)",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s",border:"1px solid rgba(39,39,42,0.6)",cursor:"default"}}
         onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 32px rgba(217,119,6,0.18),inset 0 0 20px rgba(217,119,6,0.04)"; }}
         onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.6)"; el.style.background="rgba(9,9,11,0.78)"; el.style.boxShadow="none"; }}><p style={{fontSize:"2rem",fontWeight:300,color:"#fbbf24",marginBottom:"0.25rem",fontVariantNumeric:"tabular-nums"}}>{count}{suffix}</p><p style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#a1a1aa",marginBottom:"0.2rem"}}>{label}</p><p style={{fontSize:"0.65rem",color:"#52525b"}}>{sub}</p></motion.div>);};
@@ -749,7 +636,7 @@ function Contact() {
 }
 
 function Footer() {
-  return(<footer style={{borderTop:"1px solid rgba(39,39,42,0.4)",padding:"2rem 1.5rem",background:"#09090b",position:"relative",zIndex:1}}><div style={{maxWidth:"64rem",margin:"0 auto",display:"flex",flexWrap:"wrap",alignItems:"center",justifyContent:"space-between",gap:"0.5rem"}}><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#3f3f46"}}>Sadhasivam Perichi · Sona College of Technology '26</span><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#27272a"}}>React · Tailwind · Framer Motion · Three.js</span></div></footer>);
+  return(<footer style={{borderTop:"1px solid rgba(39,39,42,0.4)",padding:"2rem 1.5rem",background:"#09090b",position:"relative",zIndex:1}}><div style={{maxWidth:"64rem",margin:"0 auto",display:"flex",flexWrap:"wrap",alignItems:"center",justifyContent:"space-between",gap:"0.5rem"}}><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#3f3f46"}}>Sadhasivam Perichi · Sona College of Technology '26</span><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#27272a"}}></span></div></footer>);
 }
 
 // ─── APP ─────────────────────────────────────────────────────────────────────
@@ -763,8 +650,6 @@ export default function App() {
         <Projects/>
         <Skills/>
         <Experience/>
-        <Achievements/>
-        <Certifications/>
         <About/>
         <Proof/>
         <Contact/>
