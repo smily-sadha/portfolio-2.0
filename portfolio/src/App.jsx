@@ -6,7 +6,7 @@ import * as THREE from "three";
 // ⚠️  SWAP THESE BEFORE DEPLOYMENT
 // ─────────────────────────────────────────────────────────────────────────────
 const PHOTO_URL   = "/assets/myphoto.jpg";
-const RESUME_URL  = "/assets/Sadhasivam_resume.pdf";
+const RESUME_URL  = "/assets/sadhasivam_updated_resume";
 
 
 
