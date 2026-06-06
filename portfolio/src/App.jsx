@@ -6,7 +6,13 @@ import * as THREE from "three";
 // ⚠️  SWAP THESE BEFORE DEPLOYMENT
 // ─────────────────────────────────────────────────────────────────────────────
 const PHOTO_URL   = "/assets/myphoto.jpg";
+<<<<<<< HEAD
 const RESUME_URL = "/assets/sadhasivam_updated_resume.pdf";
+=======
+const RESUME_URL  = "/assets/Sadhasivam_resume.pdf";
+const GITHUB_USER = "smily-sadha";   // ← live stats in the "GitHub & Demos" section are pulled from this account
+
+>>>>>>> d50c268 (github commit is in live)
 
 
 // ─── PROJECTS DATA ───────────────────────────────────────────────────────────
@@ -117,6 +123,16 @@ function useScrollReveal(threshold=0.1) {
   const isInView = useInView(ref, { once:true, amount:threshold });
   return [ref, isInView];
 }
+function useIsMobile(breakpoint=768) {
+  const [isMobile,setIsMobile] = useState(typeof window!=="undefined" && window.innerWidth<breakpoint);
+  useEffect(()=>{
+    const onResize = () => setIsMobile(window.innerWidth<breakpoint);
+    onResize();
+    window.addEventListener("resize",onResize);
+    return () => window.removeEventListener("resize",onResize);
+  },[breakpoint]);
+  return isMobile;
+}
 function SplitHeading({ text, isInView }) {
   return (
     <span style={{ display:"inline-flex", overflow:"hidden" }}>
@@ -144,8 +160,11 @@ function CursorGlow() {
 
   const pos = useRef({ x:-300, y:-300 });
   const blob = useRef({ x:-300, y:-300 });
+  // Only enable on devices with a real (hovering, fine) pointer — never on touch/mobile.
+  const [enabled] = useState(()=> typeof window!=="undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
 
   useEffect(()=>{
+    if(!enabled) return;
     const onMove = e => { pos.current = { x:e.clientX, y:e.clientY }; };
     window.addEventListener("mousemove", onMove);
 
@@ -174,7 +193,9 @@ function CursorGlow() {
       document.body.style.cursor = "auto";
       cancelAnimationFrame(id);
     };
-  }, []);
+  }, [enabled]);
+
+  if(!enabled) return null;
 
   return (
     <>
@@ -213,7 +234,7 @@ function useCounter(targetStr, inView, duration=1800) {
     let start=null;
     const step=ts=>{ if(!start)start=ts; const p=Math.min((ts-start)/duration,1); setVal(Math.floor((1-Math.pow(1-p,3))*num)); if(p<1)requestAnimationFrame(step); else setVal(num); };
     requestAnimationFrame(step);
-  },[inView]);
+  },[inView,targetStr]);
   return val;
 }
 
@@ -379,11 +400,13 @@ function FloatingCode() {
 // ─── SECTION WRAPPERS ────────────────────────────────────────────────────────
 function PlainSection({ id, label, children }) {
   const [ref,isInView]=useScrollReveal();
-  return(<section id={id} ref={ref} style={{position:"relative",padding:"6rem 1.5rem",maxWidth:"64rem",margin:"0 auto",zIndex:1}}>{label&&(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} style={{marginBottom:"3rem"}}><div style={{marginBottom:"0.5rem",display:"flex",alignItems:"center",gap:"0.4rem"}}><span style={{color:"#52525b",fontFamily:"monospace",fontSize:"0.68rem"}}>—</span><SplitHeading text={label} isInView={isInView}/></div><div style={{height:"1px",background:"rgba(39,39,42,0.6)"}}/></motion.div>)}{children}</section>);
+  const isMobile=useIsMobile();
+  return(<section id={id} ref={ref} style={{position:"relative",padding:isMobile?"4rem 1.25rem":"6rem 1.5rem",maxWidth:"64rem",margin:"0 auto",zIndex:1}}>{label&&(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} style={{marginBottom:"3rem"}}><div style={{marginBottom:"0.5rem",display:"flex",alignItems:"center",gap:"0.4rem"}}><span style={{color:"#52525b",fontFamily:"monospace",fontSize:"0.68rem"}}>—</span><SplitHeading text={label} isInView={isInView}/></div><div style={{height:"1px",background:"rgba(39,39,42,0.6)"}}/></motion.div>)}{children}</section>);
 }
 function HexSection({ id, label, children }) {
   const [ref,isInView]=useScrollReveal();
-  return(<div style={{position:"relative",overflow:"hidden",background:"#09090b"}}><HexSectionBackground/><section id={id} ref={ref} style={{position:"relative",padding:"6rem 1.5rem",maxWidth:"64rem",margin:"0 auto",zIndex:1}}>{label&&(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} style={{marginBottom:"3rem"}}><div style={{marginBottom:"0.5rem",display:"flex",alignItems:"center",gap:"0.4rem"}}><span style={{color:"#52525b",fontFamily:"monospace",fontSize:"0.68rem"}}>—</span><SplitHeading text={label} isInView={isInView}/></div><div style={{height:"1px",background:"rgba(39,39,42,0.4)"}}/></motion.div>)}{children}</section></div>);
+  const isMobile=useIsMobile();
+  return(<div style={{position:"relative",overflow:"hidden",background:"#09090b"}}><HexSectionBackground/><section id={id} ref={ref} style={{position:"relative",padding:isMobile?"4rem 1.25rem":"6rem 1.5rem",maxWidth:"64rem",margin:"0 auto",zIndex:1}}>{label&&(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} style={{marginBottom:"3rem"}}><div style={{marginBottom:"0.5rem",display:"flex",alignItems:"center",gap:"0.4rem"}}><span style={{color:"#52525b",fontFamily:"monospace",fontSize:"0.68rem"}}>—</span><SplitHeading text={label} isInView={isInView}/></div><div style={{height:"1px",background:"rgba(39,39,42,0.4)"}}/></motion.div>)}{children}</section></div>);
 }
 
 // ─── NAV ─────────────────────────────────────────────────────────────────────
@@ -418,8 +441,9 @@ function Hero() {
   const isG=phase==="glitching",isDone=phase==="done";
   const sf=isG?gFirst:firstName,sl=isG?gLast:lastName;
   const glow=isG?{textShadow:"2px 0 0 rgba(255,0,0,0.7),-2px 0 0 rgba(0,255,255,0.7),0 0 24px rgba(217,119,6,0.9)",transition:"none"}:{};
+  const isMobile=useIsMobile();
   return(
-    <section style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",padding:"0 1.5rem",maxWidth:"64rem",margin:"0 auto",position:"relative",overflow:"hidden",background:"#09090b"}}>
+    <section style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",padding:"0 1.25rem",maxWidth:"64rem",margin:"0 auto",position:"relative",overflow:"hidden",background:"#09090b"}}>
       <NeuralNetCanvas/><FloatingCode/>
       <div style={{position:"absolute",inset:0,pointerEvents:"none",zIndex:1,background:"radial-gradient(ellipse 55% 65% at 45% 50%,transparent 15%,rgba(9,9,11,0.88) 100%)"}}/>
       <div style={{position:"absolute",top:"1.5rem",right:"1.5rem",display:"flex",alignItems:"center",gap:"0.5rem",opacity:0.45,zIndex:2}}>
@@ -427,13 +451,13 @@ function Hero() {
       </div>
 
       {/* ── Hero layout: Photo LEFT + Text RIGHT ── */}
-      <div style={{position:"relative",zIndex:2,display:"flex",alignItems:"center",gap:"3rem",flexWrap:"wrap"}}>
+      <div style={{position:"relative",zIndex:2,display:"flex",alignItems:"center",gap:isMobile?"2rem":"3rem",flexWrap:"wrap",justifyContent:isMobile?"center":"flex-start"}}>
 
         {/* PHOTO — Option A */}
         <HeroPhoto />
 
         {/* TEXT */}
-        <div style={{flex:1,minWidth:280}}>
+        <div style={{flex:1,minWidth:isMobile?"100%":280}}>
           <motion.p initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.2,duration:0.8}} style={{fontSize:"0.7rem",fontFamily:"monospace",letterSpacing:"0.3em",textTransform:"uppercase",color:"#52525b",marginBottom:"1.5rem"}}>Open to internships &amp; full-time · 2025 – 2026</motion.p>
           <div style={{marginBottom:"2rem"}}>
             <h1 style={{fontFamily:"Georgia,'Times New Roman',serif",fontSize:"clamp(2.5rem,6vw,4.5rem)",fontWeight:300,color:isG?"#fbbf24":"#f4f4f5",lineHeight:1.05,margin:0,...glow}}>{sf}{phase==="typing-first"&&<span style={{borderRight:"3px solid #d97706",marginLeft:"3px",animation:"blink-caret 0.65s step-end infinite"}}> </span>}</h1>
@@ -509,6 +533,8 @@ function Projects() {
   const rest=projects.filter(p=>!p.featured);
   const [ref,isInView]=useScrollReveal();
   const [expanded,setExpanded]=useState({});
+  const isMobile=useIsMobile();
+  const ind=isMobile?"0":"4.25rem"; // left indent under the year column — flush left on mobile
   return(
     <HexSection id="projects" label="Projects">
       <div ref={ref}>
@@ -525,17 +551,17 @@ function Projects() {
                 <a href={p.link} target="_blank" rel="noopener noreferrer" style={{color:"#52525b",fontSize:"0.9rem",textDecoration:"none",transition:"color 0.2s"}} onMouseEnter={e=>e.target.style.color="#d97706"} onMouseLeave={e=>e.target.style.color="#52525b"}>↗</a>
               </div>
             </div>
-            <p style={{fontSize:"0.82rem",color:"#71717a",lineHeight:1.65,margin:"0 0 0.6rem 4.25rem"}}>{p.description}</p>
+            <p style={{fontSize:"0.82rem",color:"#71717a",lineHeight:1.65,margin:`0 0 0.6rem ${ind}`}}>{p.description}</p>
             <AnimatePresence>{expanded[p.id]&&(<motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:"auto"}} exit={{opacity:0,height:0}} transition={{duration:0.3}}>
-              <p style={{fontSize:"0.78rem",color:"#52525b",lineHeight:1.7,margin:"0 0 0.6rem 4.25rem",borderLeft:"2px solid #92400e",paddingLeft:"0.75rem"}}>{p.details}</p>
-              <div style={{margin:"0 0 0.5rem 4.25rem",padding:"0.6rem 0.75rem",background:"rgba(217,119,6,0.04)",border:"1px solid rgba(217,119,6,0.12)",borderRadius:"3px"}}>
+              <p style={{fontSize:"0.78rem",color:"#52525b",lineHeight:1.7,margin:`0 0 0.6rem ${ind}`,borderLeft:"2px solid #92400e",paddingLeft:"0.75rem"}}>{p.details}</p>
+              <div style={{margin:`0 0 0.5rem ${ind}`,padding:"0.6rem 0.75rem",background:"rgba(217,119,6,0.04)",border:"1px solid rgba(217,119,6,0.12)",borderRadius:"3px"}}>
                 <p style={{fontFamily:"monospace",fontSize:"0.58rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#b45309",marginBottom:"0.3rem"}}>Challenge & Solution</p>
                 <p style={{fontFamily:"monospace",fontSize:"0.7rem",color:"#71717a",lineHeight:1.6}}>{p.challenges}</p>
               </div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:"0.5rem",margin:"0 0 0.5rem 4.25rem"}}>{p.metrics.map(m=>(<span key={m} style={{fontSize:"0.7rem",fontFamily:"monospace",color:"#a1a1aa",display:"flex",gap:"0.4rem",alignItems:"center"}}><span style={{color:"#92400e",fontSize:"0.6rem"}}>→</span>{m}</span>))}</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:"0.5rem",margin:`0 0 0.5rem ${ind}`}}>{p.metrics.map(m=>(<span key={m} style={{fontSize:"0.7rem",fontFamily:"monospace",color:"#a1a1aa",display:"flex",gap:"0.4rem",alignItems:"center"}}><span style={{color:"#92400e",fontSize:"0.6rem"}}>→</span>{m}</span>))}</div>
             </motion.div>)}</AnimatePresence>
-            <div style={{display:"flex",flexWrap:"wrap",gap:"0.4rem",margin:"0 0 0.5rem 4.25rem"}}>{p.stack.map(s=><Pill key={s}>{s}</Pill>)}</div>
-            <button onClick={()=>setExpanded(e=>({...e,[p.id]:!e[p.id]}))} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:"0.65rem",color:expanded[p.id]?"#71717a":"#d97706",padding:"0 0 0 4.25rem",letterSpacing:"0.1em"}}>{expanded[p.id]?"↑ Less detail":"↓ More detail"}</button>
+            <div style={{display:"flex",flexWrap:"wrap",gap:"0.4rem",margin:`0 0 0.5rem ${ind}`}}>{p.stack.map(s=><Pill key={s}>{s}</Pill>)}</div>
+            <button onClick={()=>setExpanded(e=>({...e,[p.id]:!e[p.id]}))} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:"0.65rem",color:expanded[p.id]?"#71717a":"#d97706",padding:`0 0 0 ${ind}`,letterSpacing:"0.1em"}}>{expanded[p.id]?"↑ Less detail":"↓ More detail"}</button>
           </motion.div>
         ))}
       </div>
@@ -554,15 +580,16 @@ function Skills() {
 // ─── EXPERIENCE ──────────────────────────────────────────────────────────────
 function Experience() {
   const [ref,isInView]=useScrollReveal();
+  const isMobile=useIsMobile();
   return(
     <HexSection id="experience" label="Experience">
       <div ref={ref} style={{display:"flex",flexDirection:"column",gap:"1.25rem"}}>
         {experience.map((e,i)=>(
           <motion.div key={e.company} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={i}
-            style={{border:"1px solid rgba(39,39,42,0.8)",borderRadius:"4px",background:"rgba(9,9,11,0.75)",backdropFilter:"blur(12px)",padding:"2rem",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
+            style={{border:"1px solid rgba(39,39,42,0.8)",borderRadius:"4px",background:"rgba(9,9,11,0.75)",backdropFilter:"blur(12px)",padding:isMobile?"1.5rem":"2rem",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
             onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 32px rgba(217,119,6,0.18),inset 0 0 20px rgba(217,119,6,0.04)"; }}
             onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.75)"; el.style.boxShadow="none"; }}>
-            <div style={{display:"grid",gridTemplateColumns:"220px 1fr",gap:"3rem"}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"220px 1fr",gap:isMobile?"1rem":"3rem"}}>
               <div>
                 <p style={{fontFamily:"Georgia,serif",fontSize:"1.1rem",fontWeight:300,color:"#f4f4f5",marginBottom:"0.25rem"}}>{e.company}</p>
                 <p style={{fontSize:"0.85rem",color:"#d97706",marginBottom:"0.25rem"}}>{e.role}</p>
@@ -589,12 +616,13 @@ function About() {
   const [ref,isInView]=useScrollReveal();
   const chipRef=useRef(null);
   const chipInView=useInView(chipRef,{once:true,amount:0.25});
+  const isMobile=useIsMobile();
   return(
     <HexSection id="about" label="About">
-      <div style={{border:"1px solid rgba(39,39,42,0.8)",borderRadius:"4px",background:"rgba(9,9,11,0.75)",backdropFilter:"blur(12px)",padding:"2.5rem",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
+      <div style={{border:"1px solid rgba(39,39,42,0.8)",borderRadius:"4px",background:"rgba(9,9,11,0.75)",backdropFilter:"blur(12px)",padding:isMobile?"1.75rem":"2.5rem",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
         onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 40px rgba(217,119,6,0.18),inset 0 0 24px rgba(217,119,6,0.04)"; }}
         onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.75)"; el.style.boxShadow="none"; }}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"3rem",alignItems:"center"}}>
+        <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:isMobile?"2rem":"3rem",alignItems:"center"}}>
           <motion.div ref={ref} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp}>
             <p style={{color:"#d4d4d8",fontSize:"0.95rem",lineHeight:1.8,marginBottom:"1.25rem"}}>Artificial Intelligence & Machine Learning graduate from Sona College of Technology, Salem.
 Currently working as an AI Engineer at Spacemarvel.ai, building production-grade agentic voice systems and RAG pipelines.</p>
@@ -621,7 +649,29 @@ Currently working as an AI Engineer at Spacemarvel.ai, building production-grade
 // ─── PROOF ───────────────────────────────────────────────────────────────────
 function Proof() {
   const [ref,isInView]=useScrollReveal();
-  const stats=[{value:"12+",label:"GitHub Repos",sub:"public projects"},{value:"300+",label:"Commits (12mo)",sub:"active contributor"},{value:"6+",label:"Projects Built",sub:"AI · CV · Web · Data"}];
+  // Live GitHub stats — fetched once from the public GitHub API + contributions API.
+  // Falls back to sensible defaults if either request fails (offline / rate-limited).
+  const [gh,setGh]=useState({ repos:null, contributions:null });
+  useEffect(()=>{
+    const ctrl=new AbortController();
+    (async()=>{
+      try{
+        const user=await fetch(`https://api.github.com/users/${GITHUB_USER}`,{signal:ctrl.signal}).then(r=>r.ok?r.json():null);
+        let contributions=null;
+        try{
+          const c=await fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USER}?y=last`,{signal:ctrl.signal}).then(r=>r.ok?r.json():null);
+          contributions=c?.total?.lastYear ?? null;
+        }catch(e){ if(e.name!=="AbortError") contributions=null; }
+        if(user) setGh(g=>({ ...g, repos:user.public_repos, contributions }));
+      }catch(e){ /* keep fallback values */ }
+    })();
+    return ()=>ctrl.abort();
+  },[]);
+  const stats=[
+    {value: gh.repos!=null ? `${gh.repos}` : "12+", label:"GitHub Repos", sub:"public · live"},
+    {value: gh.contributions!=null ? `${gh.contributions}` : "300+", label:"Contributions (12mo)", sub:"commits · PRs · issues"},
+    {value:`${projects.length}`, label:"Projects Showcased", sub:"AI · CV · Web · Data"},
+  ];
   const StatCard=({value,label,sub,index})=>{const suffix=(value+"").replace(/[0-9]/g,""),count=useCounter(value,isInView);return(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={index} style={{background:"rgba(9,9,11,0.78)",padding:"1.5rem",textAlign:"center",backdropFilter:"blur(8px)",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s",border:"1px solid rgba(39,39,42,0.6)",cursor:"default"}}
         onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 32px rgba(217,119,6,0.18),inset 0 0 20px rgba(217,119,6,0.04)"; }}
         onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.6)"; el.style.background="rgba(9,9,11,0.78)"; el.style.boxShadow="none"; }}><p style={{fontSize:"2rem",fontWeight:300,color:"#fbbf24",marginBottom:"0.25rem",fontVariantNumeric:"tabular-nums"}}>{count}{suffix}</p><p style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#a1a1aa",marginBottom:"0.2rem"}}>{label}</p><p style={{fontSize:"0.65rem",color:"#52525b"}}>{sub}</p></motion.div>);};
