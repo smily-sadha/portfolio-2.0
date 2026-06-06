@@ -6,13 +6,8 @@ import * as THREE from "three";
 // ⚠️  SWAP THESE BEFORE DEPLOYMENT
 // ─────────────────────────────────────────────────────────────────────────────
 const PHOTO_URL   = "/assets/myphoto.jpg";
-<<<<<<< HEAD
-const RESUME_URL = "/assets/sadhasivam_updated_resume.pdf";
-=======
-const RESUME_URL  = "/assets/Sadhasivam_resume.pdf";
+const RESUME_URL  = "/assets/sadhasivam_updated_resume_1.1.pdf";
 const GITHUB_USER = "smily-sadha";   // ← live stats in the "GitHub & Demos" section are pulled from this account
-
->>>>>>> d50c268 (github commit is in live)
 
 
 // ─── PROJECTS DATA ───────────────────────────────────────────────────────────
