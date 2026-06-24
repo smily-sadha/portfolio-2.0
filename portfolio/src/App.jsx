@@ -8,32 +8,75 @@ import * as THREE from "three";
 const PHOTO_URL   = "/assets/myphoto.jpg";
 const RESUME_URL  = "/assets/sadhasivam_updated_resume_1.1.pdf";
 const GITHUB_USER = "smily-sadha";   // ← live stats in the "GitHub & Demos" section are pulled from this account
+const GITHUB_URL  = "https://github.com/smily-sadha";
+const LINKEDIN_URL= "https://linkedin.com/in/sadhasivam-perichi-160449255/";
+const EMAIL       = "sadhasivamperichi@gmail.com";
 
 
 // ─── PROJECTS DATA ───────────────────────────────────────────────────────────
 const projects = [
   {
-    id:1, name:"AI Voice Agent Platform", tag:"AI Agents", year:"2025", featured:true,
+    id:1, name:"Vision Assistance System for the Visually Impaired", tag:"Final-Year · Edge AI", year:"2026", featured:true,
+    description:"Wearable vision system that combines real-time object detection, face recognition, and audio guidance for visually impaired users. Presented at ICCISS 2026.",
+    details:"YOLOv8 runs object detection at >0.90 confidence, InsightFace + FAISS handle face recognition against an enrolled identity database, and Deepgram streams spoken guidance to the user. A Gemini LLM layer turns the visual scene into natural language descriptions. The ESP32-CAM module captures frames and streams them to the inference pipeline; an Arduino drives haptic + audio feedback for low-latency cues.",
+    stack:["Python","YOLOv8","InsightFace","FAISS","Deepgram","Gemini","ESP32-CAM","Arduino"],
+    metrics:[">0.90 YOLO confidence","2–3 FPS on CPU","Real-time audio guidance","Presented at ICCISS 2026"],
+    challenges:"Power budget on the ESP32 meant we couldn't run inference on-device. Solved by streaming compressed frames to a companion phone over Wi-Fi, running YOLO there, and pushing descriptions back over a low-latency socket. End-to-end perception-to-audio latency stayed under 1.2s.",
+    demo:"",
+    link:"https://github.com/smily-sadha/vision-assistance",
+  },
+  {
+    id:2, name:"AI Voice Agent Platform", tag:"AI Agents", year:"2025", featured:true,
     description:"End-to-end agentic AI voice system for real-world call automation — cold-calling, hospital appointment booking, and delivery coordination with full conversation context and SOP compliance.",
     details:"Pipecat handles the orchestration layer, LiveKit provides WebRTC media transport, and Deepgram powers real-time transcription under 300ms. Each agent is domain-specialized: the hospital booking agent integrates with calendar APIs while the cold-calling agent routes objections via LangChain chains. Clerk manages auth and session state across multi-agent flows.",
     stack:["Python","LangChain","Deepgram","Pipecat","LiveKit","FastAPI","Clerk"],
-    metrics:["3 distinct call-type agents","<300ms STT/TTS latency","RAG-backed SOP guidance","Clerk session management"],
+    metrics:["3 distinct call-type agents","<300ms STT/TTS latency","RAG-backed SOP guidance","~60% reduction in manual call handling"],
     challenges:"Hardest part was maintaining conversation state across hand-offs between agents without losing context. Solved with a shared Redis session store and LangChain memory buffers per call session.",
     demo:"",
-    link:"https://github.com/smily-sadha",
+    link:"https://github.com/smily-sadha/cold-call",
   },
   {
-    id:2, name:"RAG System for Hospital SOPs", tag:"LLM / RAG", year:"2025", featured:true,
+    id:3, name:"RAG System for Hospital SOPs", tag:"LLM / RAG", year:"2025", featured:true,
     description:"Production-grade Retrieval-Augmented Generation system for hospital Standard Operating Procedures. Full document ingestion, semantic chunking, vector storage and multi-turn retrieval with source citation.",
     details:"Recursive character text splitting with 512-token chunks and 64-token overlap. Embeddings via OpenAI ada-002 stored in FAISS with cosine similarity retrieval. MongoDB handles multi-turn conversation history. FastAPI layer with Clerk authentication. Responses include source document references for compliance traceability.",
     stack:["Python","LangChain","FAISS","OpenAI Embeddings","MongoDB","FastAPI","Clerk"],
     metrics:["Full ingestion-to-retrieval pipeline","Semantic chunking with overlap","Source-cited responses","Multi-turn conversation memory"],
     challenges:"Chunking strategy was critical — too small lost context, too large killed retrieval precision. 512/64 overlap hit the sweet spot after testing. Also needed to handle PDF tables and formatted SOPs which break naive text splitters.",
     demo:"",
-    link:"https://github.com/smily-sadha",
+    link:"https://github.com/smily-sadha/cold-call",
   },
   {
-    id:3, name:"Online Voting with Face Recognition", tag:"Computer Vision", year:"2024", featured:false,
+    id:4, name:"STT/TTS Benchmarking Suite", tag:"Evaluation · Voice", year:"2025", featured:false,
+    description:"Benchmarking harness comparing multiple Speech-to-Text and Text-to-Speech engines (Deepgram, Whisper, ElevenLabs, PlayHT, gTTS) against a fixed test corpus using WER, latency, MOS, and cost metrics.",
+    details:"Built a reproducible eval pipeline that runs each engine against a held-out audio set, then reports WER (Word Error Rate), RTF (Real-Time Factor), end-to-end latency, and $/1k-requests. Results rendered as comparison tables + charts. Used internally to pick the best STT/TTS stack for production voice agents — Deepgram won on latency, Whisper-large-v3 won on raw WER.",
+    stack:["Python","Whisper","Deepgram","ElevenLabs","jiWER","Matplotlib"],
+    metrics:["5 STT engines benchmarked","WER + latency + cost metrics","Reproducible eval corpus","Production decision support"],
+    challenges:"TTS quality is subjective — added an automated MOS proxy using a speaker-embedding similarity score between generated and reference audio. Not a perfect substitute for human MOS but caught obvious regressions in CI.",
+    demo:"",
+    link:"https://github.com/smily-sadha/benchmarking-of-multiple-STT-and-TTS-with-metrices",
+  },
+  {
+    id:5, name:"Voice Dairy", tag:"Voice · LLM", year:"2025", featured:false,
+    description:"Voice-first journaling app — speak your entry, the LLM transcribes, summarizes, and tags it, then stores a searchable memory you can revisit later.",
+    details:"Deepgram STT streams transcription while the user speaks. A LangChain chain summarizes the entry, extracts topics, and stores a vector embedding for semantic search across past entries. Conversational recall: ask 'what did I think about X last month?' and the diary returns the relevant entries with timestamps.",
+    stack:["Python","Deepgram","LangChain","FAISS","FastAPI"],
+    metrics:["Voice → searchable memory","Auto-summarization","Semantic recall over entries","Sub-second transcription"],
+    challenges:"Diarisation wasn't necessary for a single-user diary, but background noise on phone mics killed WER. Added a lightweight VAD (Voice Activity Detection) pre-filter using WebRTC VAD to drop silent frames before sending audio to Deepgram — saved ~40% in API cost and improved transcription accuracy.",
+    demo:"",
+    link:"https://github.com/smily-sadha/voice-dairy",
+  },
+  {
+    id:6, name:"Advocate AI", tag:"Legal · LLM", year:"2024", featured:false,
+    description:"AI assistant for legal Q&A — ingests case law and statute documents, answers questions with citations, and drafts basic legal correspondence.",
+    details:"RAG over a curated corpus of Indian law documents with LangChain. Retrieval uses BM25 + dense embedding hybrid search for better recall on legal terminology. Responses include inline citations linking back to source documents. The draft-correspondence module uses a structured prompt that pulls in case-specific context and produces a formatted letter ready for lawyer review.",
+    stack:["Python","LangChain","FAISS","BM25","FastAPI","React"],
+    metrics:["Hybrid BM25 + dense retrieval","Citation-backed answers","Draft correspondence generator","Legal-domain tuning"],
+    challenges:"Legal text is full of defined terms that map to non-obvious concepts ('the said party', 'hereinafter'). Built a glossary-injection step that expands defined terms into their definitions before embedding, which improved retrieval precision on term-heavy queries.",
+    demo:"",
+    link:"https://github.com/smily-sadha/advocate-ai",
+  },
+  {
+    id:7, name:"Online Voting with Face Recognition", tag:"Computer Vision", year:"2024", featured:false,
     description:"Biometric-secured online voting platform using real-time facial recognition for voter identity verification. Prevents duplicate voting and impersonation through CV at the authentication layer.",
     details:"Face detection via SSD with ResNet-10 backbone. Each verified face is encoded into a 128-d embedding using dlib's face_recognition. Embeddings are hashed and stored in MongoDB — any match within 0.6 Euclidean distance threshold is rejected as a duplicate. Full audit log captures timestamp, voter ID, and confidence score per authentication attempt.",
     stack:["Python","OpenCV","SSD","dlib","MongoDB","Flask"],
@@ -43,55 +86,74 @@ const projects = [
     link:"https://github.com/smily-sadha",
   },
   {
-    id:4, name:"Plant Leaf Disease Detection", tag:"Deep Learning", year:"2024", featured:false,
+    id:8, name:"Plant Leaf Disease Detection", tag:"Deep Learning", year:"2024", featured:false,
     description:"CNN-based agricultural image classification for early plant disease detection. Trained on multi-class leaf datasets with data augmentation, deployed as a Flask web app with confidence scoring.",
     details:"Custom CNN with 4 Conv-Pool blocks (32→64→128→256 filters) followed by two dense layers and softmax output. Trained with Adam optimizer, categorical cross-entropy, and early stopping on val loss. Data augmentation: rotation ±30°, horizontal/vertical flip, zoom 0.2, shear 0.2. Flask app accepts JPG/PNG, preprocesses to 224×224, returns top-3 class probabilities.",
     stack:["Python","TensorFlow","Keras","OpenCV","Flask","NumPy","Matplotlib"],
     metrics:["92% validation accuracy","15-class classification","Real-time Flask inference","Top-3 confidence output"],
     challenges:"Class imbalance in the dataset — some disease classes had 5× more samples. Used class_weight parameter in model.fit() and oversampled minority classes with augmentation to balance the training distribution.",
     demo:"",
-    link:"https://github.com/smily-sadha",
+    link:"https://github.com/smily-sadha/plant-leaves-diseases",
   },
   {
-    id:5, name:"Online Attendance System", tag:"Computer Vision", year:"2023", featured:false,
+    id:9, name:"Online Attendance System", tag:"Computer Vision", year:"2023", featured:false,
     description:"Automated classroom attendance via live webcam and CNN-based facial feature extraction. Identifies registered students in real-time and auto-marks attendance — eliminating manual roll calls.",
     details:"Pipeline: Haar cascade detection → CNN feature extraction → SVM (RBF kernel) classification. CLAHE equalization handles poor lighting. Student face datasets collected under 3 lighting conditions per person during enrollment. Attendance records written to SQLite with timestamp, student ID, and SVM confidence score. Threshold set at 0.75 confidence to reduce false acceptances.",
     stack:["Python","OpenCV","CNN","SVM","scikit-learn","SQLite"],
     metrics:["96% test accuracy","Live webcam pipeline","CLAHE lighting robustness","Auto-timestamped records"],
     challenges:"Real classroom lighting is unpredictable — overhead fluorescents, window glare, shadows. CLAHE alone wasn't enough. Added gamma correction and bilateral filtering to the preprocessing chain which brought accuracy up from 88% to 96% under varied conditions.",
     demo:"",
-    link:"https://github.com/smily-sadha",
+    link:"https://github.com/smily-sadha/attendence",
   },
   {
-    id:6, name:"Online Job Application Portal", tag:"Full-Stack", year:"2023", featured:false,
+    id:10, name:"Online Job Application Portal", tag:"Full-Stack", year:"2023", featured:false,
     description:"Full-stack job portal with role-based access — candidates apply and track applications, employers post and review. RESTful API, JWT auth, and responsive React UI.",
     details:"Backend: Express.js REST API with 12+ endpoints, JWT middleware, bcrypt password hashing, Mongoose ODM for MongoDB. Frontend: React with component-level state, Axios for API calls, responsive Tailwind layout. Application status workflow: Applied → Under Review → Interview → Offer/Reject. Indexed MongoDB queries for job search by role, location, and salary range.",
     stack:["React","Node.js","Express","MongoDB","JWT","Tailwind CSS","Axios"],
     metrics:["Role-based auth (candidate + employer)","12+ REST endpoints","Full application status workflow","Mobile-responsive UI"],
     challenges:"Handling concurrent applications to the same job from multiple candidates without race conditions. Used MongoDB transactions and optimistic locking on the job document to ensure application counts stayed consistent under load.",
     demo:"",
-    link:"https://github.com/smily-sadha",
+    link:"https://github.com/smily-sadha/Apply-Job",
   },
 ];
 
 const skills = {
-  "AI & Agents":["LangChain","RAG","Agentic Workflows","Prompt Engineering","Deepgram","Pipecat","LiveKit"],
+  "AI & Agents":["LangChain","RAG","Agentic Workflows","Prompt Engineering","LangGraph","Deepgram","Pipecat","LiveKit"],
   "Machine Learning":["scikit-learn","Feature Engineering","Model Validation","SVM","CNN","GAN"],
-  "Deep Learning":["PyTorch","TensorFlow/Keras","OpenCV","Single Shot Detection"],
+  "Deep Learning & CV":["PyTorch","TensorFlow/Keras","YOLOv8","InsightFace","OpenCV","FAISS","Single Shot Detection"],
+  "LLM & APIs":["Gemini","OpenAI","ElevenLabs","PlayHT","Whisper"],
   "Data Analytics":["NumPy","Pandas","Matplotlib","Seaborn","Power BI","Tableau","Excel"],
-  "Web Development":["React","Node.js","Express","HTML","CSS"],
-  "Databases & Languages":["MongoDB Atlas","MySQL","Python","Java"],
+  "Web & Backend":["React","Node.js","Express","FastAPI","Flask","HTML","CSS"],
+  "Databases":["MongoDB Atlas","MySQL","Redis","SQLite"],
+  "Edge & Hardware":["ESP32-CAM","Arduino","WebRTC"],
+  "Languages":["Python","Java","TypeScript"],
 };
 
-const experience = [{
-  company:"Spacemarvel.ai", role:"AI Engineer Intern", period:"July 2025 – Present", location:"Remote",
-  bullets:[
-    "Built agentic AI voice agents for real-world call workflows — cold-calling automation, hospital appointment booking, and delivery coordination.",
-    "Developed a Retrieval-Augmented Generation (RAG) system for hospital SOP assistance using LangChain — full document ingestion, chunking, embedding, and retrieval.",
-    "Integrated real-time speech processing pipeline using Deepgram, Pipecat, and LiveKit for low-latency voice interaction.",
-    "Implemented authentication and session management using Clerk across multi-agent workflows.",
-  ],
-}];
+const experience = [
+  {
+    company:"Spacemarvel.ai", role:"AI Engineer Intern", period:"July 2025 – Present", location:"Remote, India",
+    bullets:[
+      "Designed and shipped production-grade agentic voice AI solutions for real-world workflows — cold-calling automation, hospital appointment booking, delivery coordination, and AI-driven lead generation.",
+      "Built a RAG system for hospital SOP assistance using LangChain — full document ingestion, chunking, embedding, and retrieval pipelines for knowledge-grounded responses.",
+      "Engineered real-time speech pipelines integrating Deepgram STT → LLM reasoning → ElevenLabs TTS → WebRTC transport, achieving sub-second conversational turnarounds.",
+      "Productionized end-to-end STT → LLM → TTS automation, reducing manual call-handling effort by ~60% and enabling scalable AI voice-agent deployments.",
+    ],
+  },
+  {
+    company:"Sona College of Technology", role:"Final-Year Capstone · Vision Assistance System", period:"2025 – 2026", location:"Salem, India",
+    bullets:[
+      "Built a wearable vision system for the visually impaired combining YOLOv8 object detection, InsightFace + FAISS face recognition, Deepgram audio guidance, and a Gemini LLM scene-description layer.",
+      "Deployed on ESP32-CAM + Arduino with companion-phone inference — presented at ICCISS 2026.",
+    ],
+  },
+];
+
+// ─── ACHIEVEMENTS ────────────────────────────────────────────────────────────
+const achievements = [
+  { title:"ICCISS 2026 — Paper Presentation", year:"2026", detail:"Presented the Vision Assistance System for the Visually Impaired at the International Conference on Computational Intelligence and Sustainable Systems." },
+  { title:"1st Place — Intercollegiate Football", year:"2024", detail:"Won the intercollegiate football tournament — competitive sport keeps me sharp on teamwork, communication, and performing under pressure." },
+  { title:"B.E. AI & Machine Learning — CGPA 7.5", year:"2026", detail:"Sona College of Technology, Salem. Coursework spanning ML systems, computer vision, NLP, and full-stack development." },
+];
 
 
 
@@ -408,7 +470,7 @@ function HexSection({ id, label, children }) {
 function Nav() {
   const [scrolled,setScrolled]=useState(false),[menuOpen,setMenuOpen]=useState(false);
   useEffect(()=>{const h=()=>setScrolled(window.scrollY>50);window.addEventListener("scroll",h,{passive:true});return()=>window.removeEventListener("scroll",h);},[]);
-  const links=[["Work","#case-studies"],["Projects","#projects"],["Skills","#skills"],["Experience","#experience"],["GitHub","#proof"],["Contact","#contact"]];
+  const links=[["Projects","#projects"],["Skills","#skills"],["Experience","#experience"],["About","#about"],["GitHub","#proof"],["Contact","#contact"]];
   return(<motion.nav initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} transition={{duration:0.5,delay:0.3}} style={{position:"fixed",top:0,left:0,right:0,zIndex:50,background:scrolled?"rgba(9,9,11,0.92)":"transparent",backdropFilter:scrolled?"blur(16px)":"none",borderBottom:scrolled?"1px solid rgba(39,39,42,0.7)":"1px solid transparent",transition:"background 0.3s"}}>
     <div style={{maxWidth:"64rem",margin:"0 auto",padding:"0 1.5rem",height:"3.5rem",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
       <span style={{fontFamily:"monospace",fontSize:"0.875rem",letterSpacing:"0.15em",color:"#d97706"}}>SP</span>
@@ -480,74 +542,37 @@ AI Engineer at Spacemarvel.ai, building production-grade agentic voice systems, 
   );
 }
 
-// ─── CASE STUDIES ────────────────────────────────────────────────────────────
-function CaseStudies() {
-  const featured=projects.filter(p=>p.featured);
-  const [ref,isInView]=useScrollReveal();
-  const [expanded,setExpanded]=useState({});
-  return(
-    <HexSection id="case-studies" label="Featured Work">
-      <div ref={ref} className="grid md:grid-cols-2 gap-6">
-        {featured.map((p,i)=>(
-          <motion.div key={p.id} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={i}>
-            <TiltCard style={{height:"100%",border:"1px solid rgba(39,39,42,0.8)",borderRadius:"3px",background:"rgba(9,9,11,0.72)",backdropFilter:"blur(8px)",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
-              onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 32px rgba(217,119,6,0.18),inset 0 0 20px rgba(217,119,6,0.04)"; }}
-              onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.72)"; el.style.boxShadow="none"; }}>
-              <div style={{padding:"2rem"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"1.5rem"}}><Tag>{p.tag}</Tag><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#52525b"}}>{p.year}</span></div>
-                <h3 style={{fontFamily:"Georgia,serif",fontSize:"1.2rem",fontWeight:300,color:"#f4f4f5",marginBottom:"0.75rem"}}>{p.name}</h3>
-                <p style={{color:"#a1a1aa",fontSize:"0.85rem",lineHeight:1.7,marginBottom:"0.75rem"}}>{p.description}</p>
-                <AnimatePresence>{expanded[p.id]&&(<motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:"auto"}} exit={{opacity:0,height:0}} transition={{duration:0.35}}>
-                  <p style={{color:"#71717a",fontSize:"0.8rem",lineHeight:1.7,marginBottom:"0.75rem",borderLeft:"2px solid #d97706",paddingLeft:"0.75rem"}}>{p.details}</p>
-                  <div style={{marginBottom:"0.75rem",padding:"0.75rem",background:"rgba(217,119,6,0.04)",border:"1px solid rgba(217,119,6,0.15)",borderRadius:"3px"}}>
-                    <p style={{fontFamily:"monospace",fontSize:"0.6rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#b45309",marginBottom:"0.4rem"}}>Challenge & Solution</p>
-                    <p style={{fontFamily:"monospace",fontSize:"0.72rem",color:"#71717a",lineHeight:1.6}}>{p.challenges}</p>
-                  </div>
-                </motion.div>)}</AnimatePresence>
-                <button onClick={()=>setExpanded(e=>({...e,[p.id]:!e[p.id]}))} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:"0.68rem",color:"#d97706",padding:"0",marginBottom:"1.25rem",letterSpacing:"0.1em"}}>{expanded[p.id]?"↑ Show less":"↓ Technical deep-dive"}</button>
-                <div style={{borderTop:"1px solid rgba(39,39,42,0.7)",paddingTop:"1.25rem",marginBottom:"1.25rem"}}>
-                  <p style={{fontSize:"0.65rem",fontFamily:"monospace",color:"#52525b",textTransform:"uppercase",letterSpacing:"0.18em",marginBottom:"0.75rem"}}>Highlights</p>
-                  {p.metrics.map(m=>(<p key={m} style={{fontSize:"0.8rem",fontFamily:"monospace",color:"#d4d4d8",display:"flex",gap:"0.5rem",marginBottom:"0.3rem"}}><span style={{color:"#92400e"}}>→</span>{m}</p>))}
-                </div>
-                <div style={{display:"flex",flexWrap:"wrap",gap:"0.4rem",marginBottom:"1.25rem"}}>{p.stack.map(s=><Pill key={s}>{s}</Pill>)}</div>
-                <div style={{display:"flex",gap:"0.75rem",flexWrap:"wrap"}}>
-                  <a href={p.link} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"0.4rem",fontFamily:"monospace",fontSize:"0.72rem",color:"#71717a",textDecoration:"none",border:"1px solid #3f3f46",padding:"0.4rem 0.9rem",borderRadius:"2px",transition:"border-color 0.2s,color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor="#d97706";e.currentTarget.style.color="#fbbf24";}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#3f3f46";e.currentTarget.style.color="#71717a";}}>GitHub ↗</a>
-                  {p.demo&&(<a href={p.demo} target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",alignItems:"center",gap:"0.4rem",fontFamily:"monospace",fontSize:"0.72rem",color:"#71717a",textDecoration:"none",border:"1px solid #3f3f46",padding:"0.4rem 0.9rem",borderRadius:"2px",transition:"border-color 0.2s,color 0.2s"}} onMouseEnter={e=>{e.currentTarget.style.borderColor="#b45309";e.currentTarget.style.color="#d97706";}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#3f3f46";e.currentTarget.style.color="#71717a";}}>Live Demo ↗</a>)}
-                </div>
-              </div>
-            </TiltCard>
-          </motion.div>
-        ))}
-      </div>
-    </HexSection>
-  );
-}
-
 // ─── PROJECTS ────────────────────────────────────────────────────────────────
 function Projects() {
-  const rest=projects.filter(p=>!p.featured);
+  const rest=projects;
   const [ref,isInView]=useScrollReveal();
   const [expanded,setExpanded]=useState({});
   const isMobile=useIsMobile();
   const ind=isMobile?"0":"4.25rem"; // left indent under the year column — flush left on mobile
+
+  // Whole card is clickable → opens GitHub repo in a new tab.
+  // Inner buttons/links call stopPropagation so they don't trigger the card navigation.
+  const openRepo = (link) => { if(link) window.open(link, "_blank", "noopener,noreferrer"); };
+
   return(
     <HexSection id="projects" label="Projects">
       <div ref={ref}>
         {rest.map((p,i)=>(
           <motion.div key={p.id} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={i}
-            style={{marginBottom:"0.75rem",border:"1px solid rgba(39,39,42,0.7)",padding:"1.5rem",transition:"border-color 0.2s,background 0.2s",borderRadius:"4px",background:"rgba(9,9,11,0.72)",backdropFilter:"blur(10px)"}}
-            onMouseEnter={e=>{ e.currentTarget.style.background="rgba(28,16,4,0.85)"; e.currentTarget.style.borderColor="rgba(180,83,9,0.4)"; }} onMouseLeave={e=>{ e.currentTarget.style.background="rgba(9,9,11,0.72)"; e.currentTarget.style.borderColor="rgba(39,39,42,0.7)"; }}>
+            onClick={()=>openRepo(p.link)}
+            style={{marginBottom:"0.75rem",border:"1px solid rgba(39,39,42,0.7)",padding:"1.5rem",transition:"border-color 0.2s,background 0.2s,box-shadow 0.2s,transform 0.2s",borderRadius:"4px",background:"rgba(9,9,11,0.72)",backdropFilter:"blur(10px)",cursor:"pointer",position:"relative"}}
+            onMouseEnter={e=>{ e.currentTarget.style.background="rgba(28,16,4,0.85)"; e.currentTarget.style.borderColor="rgba(180,83,9,0.55)"; e.currentTarget.style.boxShadow="0 0 28px rgba(217,119,6,0.12)"; }} onMouseLeave={e=>{ e.currentTarget.style.background="rgba(9,9,11,0.72)"; e.currentTarget.style.borderColor="rgba(39,39,42,0.7)"; e.currentTarget.style.boxShadow="none"; }}>
             <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:"0.75rem",marginBottom:"0.6rem"}}>
               <span style={{fontFamily:"monospace",fontSize:"0.68rem",color:"#52525b",minWidth:"3.5rem"}}>{p.year}</span>
               <span style={{fontFamily:"Georgia,serif",fontSize:"1rem",fontWeight:300,color:"#e4e4e7"}}>{p.name}</span>
               <Tag>{p.tag}</Tag>
-              <div style={{marginLeft:"auto",display:"flex",gap:"0.5rem"}}>
-                {p.demo&&(<a href={p.demo} target="_blank" rel="noopener noreferrer" style={{fontFamily:"monospace",fontSize:"0.65rem",color:"#b45309",textDecoration:"none",transition:"color 0.2s"}} onMouseEnter={e=>e.target.style.color="#d97706"} onMouseLeave={e=>e.target.style.color="#b45309"}>Demo ↗</a>)}
-                <a href={p.link} target="_blank" rel="noopener noreferrer" style={{color:"#52525b",fontSize:"0.9rem",textDecoration:"none",transition:"color 0.2s"}} onMouseEnter={e=>e.target.style.color="#d97706"} onMouseLeave={e=>e.target.style.color="#52525b"}>↗</a>
+              <div style={{marginLeft:"auto",display:"flex",gap:"0.5rem",alignItems:"center"}}>
+                {p.demo&&(<a href={p.demo} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()} style={{fontFamily:"monospace",fontSize:"0.65rem",color:"#b45309",textDecoration:"none",transition:"color 0.2s"}} onMouseEnter={e=>{e.target.style.color="#d97706";}} onMouseLeave={e=>{e.target.style.color="#b45309";}}>Demo ↗</a>)}
+                <span style={{fontFamily:"monospace",fontSize:"0.62rem",letterSpacing:"0.1em",textTransform:"uppercase",color:"#d97706",border:"1px solid rgba(217,119,6,0.4)",padding:"2px 8px",borderRadius:"2px",background:"rgba(217,119,6,0.06)"}}>GitHub ↗</span>
               </div>
             </div>
             <p style={{fontSize:"0.82rem",color:"#71717a",lineHeight:1.65,margin:`0 0 0.6rem ${ind}`}}>{p.description}</p>
-            <AnimatePresence>{expanded[p.id]&&(<motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:"auto"}} exit={{opacity:0,height:0}} transition={{duration:0.3}}>
+            <AnimatePresence>{expanded[p.id]&&(<motion.div initial={{opacity:0,height:0}} animate={{opacity:1,height:"auto"}} exit={{opacity:0,height:0}} transition={{duration:0.3}} onClick={e=>e.stopPropagation()}>
               <p style={{fontSize:"0.78rem",color:"#52525b",lineHeight:1.7,margin:`0 0 0.6rem ${ind}`,borderLeft:"2px solid #92400e",paddingLeft:"0.75rem"}}>{p.details}</p>
               <div style={{margin:`0 0 0.5rem ${ind}`,padding:"0.6rem 0.75rem",background:"rgba(217,119,6,0.04)",border:"1px solid rgba(217,119,6,0.12)",borderRadius:"3px"}}>
                 <p style={{fontFamily:"monospace",fontSize:"0.58rem",letterSpacing:"0.15em",textTransform:"uppercase",color:"#b45309",marginBottom:"0.3rem"}}>Challenge & Solution</p>
@@ -555,8 +580,13 @@ function Projects() {
               </div>
               <div style={{display:"flex",flexWrap:"wrap",gap:"0.5rem",margin:`0 0 0.5rem ${ind}`}}>{p.metrics.map(m=>(<span key={m} style={{fontSize:"0.7rem",fontFamily:"monospace",color:"#a1a1aa",display:"flex",gap:"0.4rem",alignItems:"center"}}><span style={{color:"#92400e",fontSize:"0.6rem"}}>→</span>{m}</span>))}</div>
             </motion.div>)}</AnimatePresence>
-            <div style={{display:"flex",flexWrap:"wrap",gap:"0.4rem",margin:`0 0 0.5rem ${ind}`}}>{p.stack.map(s=><Pill key={s}>{s}</Pill>)}</div>
-            <button onClick={()=>setExpanded(e=>({...e,[p.id]:!e[p.id]}))} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:"0.65rem",color:expanded[p.id]?"#71717a":"#d97706",padding:`0 0 0 ${ind}`,letterSpacing:"0.1em"}}>{expanded[p.id]?"↑ Less detail":"↓ More detail"}</button>
+            <div style={{display:"flex",flexWrap:"wrap",gap:"0.4rem",margin:`0 0 0.5rem ${ind}`,alignItems:"center"}}>
+              {p.stack.map(s=><Pill key={s}>{s}</Pill>)}
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:"1rem",paddingLeft:ind}}>
+              <button onClick={(e)=>{ e.stopPropagation(); setExpanded(prev=>({...prev,[p.id]:!prev[p.id]})); }} style={{background:"none",border:"none",cursor:"pointer",fontFamily:"monospace",fontSize:"0.65rem",color:expanded[p.id]?"#71717a":"#d97706",padding:"0",letterSpacing:"0.1em"}}>{expanded[p.id]?"↑ Less detail":"↓ More detail"}</button>
+              <span style={{fontFamily:"monospace",fontSize:"0.58rem",color:"#3f3f46",letterSpacing:"0.12em",textTransform:"uppercase"}}>· click card to open repo</span>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -619,10 +649,12 @@ function About() {
         onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.75)"; el.style.boxShadow="none"; }}>
         <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr",gap:isMobile?"2rem":"3rem",alignItems:"center"}}>
           <motion.div ref={ref} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp}>
-            <p style={{color:"#d4d4d8",fontSize:"0.95rem",lineHeight:1.8,marginBottom:"1.25rem"}}>Artificial Intelligence & Machine Learning graduate from Sona College of Technology, Salem.
-Currently working as an AI Engineer at Spacemarvel.ai, building production-grade agentic voice systems and RAG pipelines.</p>
-            <p style={{color:"#a1a1aa",fontSize:"0.85rem",lineHeight:1.75,marginBottom:"1.25rem"}}>Experience spans computer vision, LLM-backed systems, full-stack development, and data analytics — from model training to API deployment to front-end interfaces.</p>
-            <p style={{color:"#71717a",fontSize:"0.82rem",lineHeight:1.7}}>Outside engineering: competitive football — 1st place intercollegiate. Based in Tamil Nadu, India.</p>
+            <p style={{color:"#d4d4d8",fontSize:"0.95rem",lineHeight:1.8,marginBottom:"1.25rem"}}>I'm <span style={{color:"#fbbf24"}}>Sadhasivam Perichi</span> — an Artificial Intelligence & Machine Learning graduate from Sona College of Technology, Salem.
+ I completed nearly one year of internship as an AI Engineer at <span style={{color:"#fbbf24"}}>Spacemarvel.ai</span> where,I build production-grade agentic voice systems and RAG pipelines that handle real-world call workflows end-to-end.</p>
+            <p style={{color:"#a1a1aa",fontSize:"0.88rem",lineHeight:1.8,marginBottom:"1.25rem"}}>My final-year capstone — a <span style={{color:"#fbbf24"}}>wearable vision assistance system for the visually impaired</span> — was presented at <span style={{color:"#fbbf24"}}>ICCISS 2026</span>. It combined YOLOv8 object detection, InsightFace + FAISS face recognition, Deepgram audio guidance, and a Gemini LLM scene-description layer running across an ESP32-CAM and companion phone.</p>
+            <p style={{color:"#a1a1aa",fontSize:"0.85rem",lineHeight:1.75,marginBottom:"1.25rem"}}>Day-to-day my work spans computer vision, LLM-backed systems, full-stack development, and data analytics — from model training to API deployment to front-end interfaces. I've benchmarked multiple STT/TTS engines against WER, latency, and cost metrics to pick the right stack for production voice agents.</p>
+            <p style={{color:"#71717a",fontSize:"0.82rem",lineHeight:1.7,marginBottom:"1.25rem"}}><span style={{color:"#b45309",fontFamily:"monospace",fontSize:"0.7rem",letterSpacing:"0.15em",textTransform:"uppercase"}}>Currently learning:</span> LangGraph agentic workflows, advanced RAG pipelines, real-time WebRTC voice AI, and edge AI on ESP32 / Arduino.</p>
+            <p style={{color:"#71717a",fontSize:"0.82rem",lineHeight:1.7}}>Based in Tamil Nadu, India. Outside engineering, I play competitive football — 1st place at the intercollegiate level — which keeps me sharp on teamwork and performing under pressure.</p>
           </motion.div>
           <motion.div ref={chipRef} initial={{opacity:0,scale:0.85}} animate={chipInView?{opacity:1,scale:1}:{opacity:0,scale:0.85}} transition={{duration:0.85,ease:[0.22,1,0.36,1]}}>
             <div style={{textAlign:"center",marginBottom:"0.6rem"}}><span style={{fontFamily:"monospace",fontSize:"0.6rem",letterSpacing:"0.25em",textTransform:"uppercase",color:"#3f3f46"}}>AI Systems Architecture</span></div>
@@ -636,6 +668,29 @@ Currently working as an AI Engineer at Spacemarvel.ai, building production-grade
             </div>
           </motion.div>
         </div>
+      </div>
+    </HexSection>
+  );
+}
+
+// ─── ACHIEVEMENTS ────────────────────────────────────────────────────────────
+function Achievements() {
+  const [ref,isInView]=useScrollReveal();
+  return(
+    <HexSection id="achievements" label="Achievements">
+      <div ref={ref} style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"1rem"}}>
+        {achievements.map((a,i)=>(
+          <motion.div key={a.title} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={i}
+            style={{border:"1px solid rgba(39,39,42,0.8)",borderRadius:"4px",background:"rgba(9,9,11,0.72)",backdropFilter:"blur(8px)",padding:"1.5rem",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s"}}
+            onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 24px rgba(217,119,6,0.15)"; }}
+            onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.8)"; el.style.background="rgba(9,9,11,0.72)"; el.style.boxShadow="none"; }}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:"0.6rem"}}>
+              <p style={{fontFamily:"Georgia,serif",fontSize:"0.95rem",color:"#fbbf24",fontWeight:300}}>{a.title}</p>
+              <span style={{fontSize:"0.65rem",fontFamily:"monospace",color:"#52525b"}}>{a.year}</span>
+            </div>
+            <p style={{fontSize:"0.78rem",color:"#a1a1aa",lineHeight:1.65}}>{a.detail}</p>
+          </motion.div>
+        ))}
       </div>
     </HexSection>
   );
@@ -663,24 +718,31 @@ function Proof() {
     return ()=>ctrl.abort();
   },[]);
   const stats=[
-    {value: gh.repos!=null ? `${gh.repos}` : "12+", label:"GitHub Repos", sub:"public · live"},
+    {value: gh.repos!=null ? `${gh.repos}` : "18+", label:"GitHub Repos", sub:"public · live"},
     {value: gh.contributions!=null ? `${gh.contributions}` : "300+", label:"Contributions (12mo)", sub:"commits · PRs · issues"},
-    {value:`${projects.length}`, label:"Projects Showcased", sub:"AI · CV · Web · Data"},
+    {value:`${projects.length}`, label:"Projects Showcased", sub:"AI · CV · Voice · Web"},
   ];
   const StatCard=({value,label,sub,index})=>{const suffix=(value+"").replace(/[0-9]/g,""),count=useCounter(value,isInView);return(<motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={index} style={{background:"rgba(9,9,11,0.78)",padding:"1.5rem",textAlign:"center",backdropFilter:"blur(8px)",transition:"border-color 0.25s,background 0.25s,box-shadow 0.25s",border:"1px solid rgba(39,39,42,0.6)",cursor:"default"}}
         onMouseEnter={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(180,83,9,0.55)"; el.style.background="rgba(28,16,4,0.88)"; el.style.boxShadow="0 0 32px rgba(217,119,6,0.18),inset 0 0 20px rgba(217,119,6,0.04)"; }}
         onMouseLeave={e=>{ const el=e.currentTarget; el.style.borderColor="rgba(39,39,42,0.6)"; el.style.background="rgba(9,9,11,0.78)"; el.style.boxShadow="none"; }}><p style={{fontSize:"2rem",fontWeight:300,color:"#fbbf24",marginBottom:"0.25rem",fontVariantNumeric:"tabular-nums"}}>{count}{suffix}</p><p style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#a1a1aa",marginBottom:"0.2rem"}}>{label}</p><p style={{fontSize:"0.65rem",color:"#52525b"}}>{sub}</p></motion.div>);};
-  return(<HexSection id="proof" label="GitHub & Demos"><div ref={ref}><div className="grid grid-cols-2 md:grid-cols-4 gap-px" style={{background:"rgba(39,39,42,0.4)",border:"1px solid rgba(39,39,42,0.6)",marginBottom:"2.5rem"}}>{stats.map((s,i)=><StatCard key={s.label} {...s} index={i}/>)}</div><motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={4} style={{display:"flex",flexWrap:"wrap",gap:"1rem"}}>{[{label:"GitHub Profile",href:"https://github.com/smily-sadha"},{label:"LinkedIn",href:"https://linkedin.com/in/sadhasivam-perichi-160449255/"}].map(link=>(<a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.78rem",fontFamily:"monospace",color:"#71717a",border:"1px solid rgba(39,39,42,0.7)",padding:"0.5rem 1rem",textDecoration:"none",transition:"border-color 0.2s,color 0.2s",background:"rgba(9,9,11,0.5)"}} onMouseEnter={e=>{e.target.style.borderColor="#92400e";e.target.style.color="#e4e4e7";}} onMouseLeave={e=>{e.target.style.borderColor="rgba(39,39,42,0.7)";e.target.style.color="#71717a";}}>{link.label} ↗</a>))}</motion.div></div></HexSection>);
+  return(<HexSection id="proof" label="GitHub & Demos"><div ref={ref}><div className="grid grid-cols-1 sm:grid-cols-3 gap-px" style={{background:"rgba(39,39,42,0.4)",border:"1px solid rgba(39,39,42,0.6)",marginBottom:"2.5rem"}}>{stats.map((s,i)=><StatCard key={s.label} {...s} index={i}/>)}</div><motion.div initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} custom={4} style={{display:"flex",flexWrap:"wrap",gap:"1rem"}}>{[{label:"GitHub Profile",href:"https://github.com/smily-sadha"},{label:"LinkedIn",href:"https://linkedin.com/in/sadhasivam-perichi-160449255/"}].map(link=>(<a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" style={{fontSize:"0.78rem",fontFamily:"monospace",color:"#71717a",border:"1px solid rgba(39,39,42,0.7)",padding:"0.5rem 1rem",textDecoration:"none",transition:"border-color 0.2s,color 0.2s",background:"rgba(9,9,11,0.5)"}} onMouseEnter={e=>{e.target.style.borderColor="#92400e";e.target.style.color="#e4e4e7";}} onMouseLeave={e=>{e.target.style.borderColor="rgba(39,39,42,0.7)";e.target.style.color="#71717a";}}>{link.label} ↗</a>))}</motion.div></div></HexSection>);
 }
 
 // ─── CONTACT ─────────────────────────────────────────────────────────────────
 function Contact() {
   const [ref,isInView]=useScrollReveal();
-  return(<PlainSection id="contact" label="Contact"><motion.div ref={ref} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} style={{maxWidth:"480px"}}><h2 style={{fontFamily:"Georgia,serif",fontSize:"2rem",fontWeight:300,color:"#f4f4f5",marginBottom:"1rem"}}>Open to opportunities.</h2><p style={{color:"#71717a",fontSize:"0.85rem",lineHeight:1.7,marginBottom:"2rem"}}>Targeting AI Engineer, AI Agent Developer, Data Analyst, and Full-Stack roles. Available for internships now and full-time from 2026 graduation.</p><div style={{marginBottom:"2.5rem"}}>{[{label:"Email",value:"sadhasivamperichi@gmail.com",href:"mailto:sadhasivamperichi@gmail.com"},{label:"LinkedIn",value:"linkedin.com/in/sadhasivam-perichi",href:"https://linkedin.com/in/sadhasivam-perichi-160449255/"},{label:"GitHub",value:"github.com/smily-sadha",href:"https://github.com/smily-sadha"},{label:"Mobile",value:"+91 93612 15021",href:"tel:+919361215021"}].map(c=>(<div key={c.label} style={{display:"flex",alignItems:"center",gap:"1.5rem",marginBottom:"0.75rem"}}><span style={{width:"4.5rem",fontSize:"0.65rem",fontFamily:"monospace",color:"#52525b",textTransform:"uppercase",letterSpacing:"0.15em",flexShrink:0}}>{c.label}</span><a href={c.href} style={{fontSize:"0.82rem",fontFamily:"monospace",color:"#a1a1aa",textDecoration:"none",wordBreak:"break-all",transition:"color 0.2s"}} onMouseEnter={e=>e.target.style.color="#fbbf24"} onMouseLeave={e=>e.target.style.color="#a1a1aa"}>{c.value}</a></div>))}</div><a href="mailto:sadhasivamperichi@gmail.com" style={{display:"inline-block",padding:"0.75rem 1.5rem",background:"#d97706",color:"#09090b",fontFamily:"monospace",fontSize:"0.82rem",letterSpacing:"0.08em",textDecoration:"none",transition:"background 0.2s"}} onMouseEnter={e=>e.target.style.background="#fbbf24"} onMouseLeave={e=>e.target.style.background="#d97706"}>Send a message →</a></motion.div></PlainSection>);
+  const [showPhone,setShowPhone]=useState(false);
+  const contacts=[
+    {label:"Email",value:EMAIL,href:`mailto:${EMAIL}`},
+    {label:"LinkedIn",value:"linkedin.com/in/sadhasivam-perichi",href:LINKEDIN_URL},
+    {label:"GitHub",value:"github.com/smily-sadha",href:GITHUB_URL},
+    {label:"Mobile",value:showPhone?"+91 93612 15021":"Reveal number",href:showPhone?"tel:+919361215021":"#",onClick:e=>{ if(!showPhone){ e.preventDefault(); setShowPhone(true); } }},
+  ];
+  return(<PlainSection id="contact" label="Contact"><motion.div ref={ref} initial="hidden" animate={isInView?"visible":"hidden"} variants={fadeUp} style={{maxWidth:"480px"}}><h2 style={{fontFamily:"Georgia,serif",fontSize:"2rem",fontWeight:300,color:"#f4f4f5",marginBottom:"1rem"}}>Open to opportunities.</h2><p style={{color:"#71717a",fontSize:"0.85rem",lineHeight:1.7,marginBottom:"2rem"}}>Targeting AI Engineer, AI Agent Developer, Voice AI, Data Analyst, and Full-Stack roles. Available for internships now and full-time from 2026 graduation.</p><div style={{marginBottom:"2.5rem"}}>{contacts.map(c=>(<div key={c.label} style={{display:"flex",alignItems:"center",gap:"1.5rem",marginBottom:"0.75rem"}}><span style={{width:"4.5rem",fontSize:"0.65rem",fontFamily:"monospace",color:"#52525b",textTransform:"uppercase",letterSpacing:"0.15em",flexShrink:0}}>{c.label}</span><a href={c.href} onClick={c.onClick} style={{fontSize:"0.82rem",fontFamily:"monospace",color:"#a1a1aa",textDecoration:"none",wordBreak:"break-all",transition:"color 0.2s",cursor:"pointer"}} onMouseEnter={e=>e.target.style.color="#fbbf24"} onMouseLeave={e=>e.target.style.color="#a1a1aa"}>{c.value}</a></div>))}</div><a href={`mailto:${EMAIL}`} style={{display:"inline-block",padding:"0.75rem 1.5rem",background:"#d97706",color:"#09090b",fontFamily:"monospace",fontSize:"0.82rem",letterSpacing:"0.08em",textDecoration:"none",transition:"background 0.2s"}} onMouseEnter={e=>e.target.style.background="#fbbf24"} onMouseLeave={e=>e.target.style.background="#d97706"}>Send a message →</a></motion.div></PlainSection>);
 }
 
 function Footer() {
-  return(<footer style={{borderTop:"1px solid rgba(39,39,42,0.4)",padding:"2rem 1.5rem",background:"#09090b",position:"relative",zIndex:1}}><div style={{maxWidth:"64rem",margin:"0 auto",display:"flex",flexWrap:"wrap",alignItems:"center",justifyContent:"space-between",gap:"0.5rem"}}><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#3f3f46"}}>Sadhasivam Perichi · Sona College of Technology '26</span><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#27272a"}}></span></div></footer>);
+  return(<footer style={{borderTop:"1px solid rgba(39,39,42,0.4)",padding:"2rem 1.5rem",background:"#09090b",position:"relative",zIndex:1}}><div style={{maxWidth:"64rem",margin:"0 auto",display:"flex",flexWrap:"wrap",alignItems:"center",justifyContent:"space-between",gap:"0.5rem"}}><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#3f3f46"}}>Sadhasivam Perichi · Sona College of Technology '26</span><span style={{fontSize:"0.68rem",fontFamily:"monospace",color:"#27272a"}}>Built with React · Vite · Framer Motion</span></div></footer>);
 }
 
 // ─── APP ─────────────────────────────────────────────────────────────────────
@@ -690,10 +752,10 @@ export default function App() {
       <ScrollProgressBar/><CursorGlow/><Nav/>
       <main style={{paddingTop:"3.5rem"}}>
         <Hero/>
-        <CaseStudies/>
         <Projects/>
         <Skills/>
         <Experience/>
+        <Achievements/>
         <About/>
         <Proof/>
         <Contact/>
